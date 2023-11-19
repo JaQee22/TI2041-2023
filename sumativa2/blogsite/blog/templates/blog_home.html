@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+</head>
+<body>
+    
+     <!-- Encabezado -->
+<header>
+    <h1>Blog Jacqueline</h1>
+    <!-- Icono de usuario en el lado izquierdo -->
+    <span >
+        <img src="{% static 'bootstrap/iconos/usuario.svg' %}" alt="User Icon" class="me-2" width="30" height="30">
+    <button type="button" class="btn btn-primary me-2" id="adminBtn">Admin</button>
+    </span>
+</header>
+
+
+<div class="container mt-5">
+    <main class="row">
+        <!-- Article -->
+        <article class="col-md-8">
+            <div class="border p-3 rounded">
+                <h2 class="fst-italic"><span style="color:darkmagenta;">Mi Blog Personal</span></h2>
+            </div><br>
+
+            <div class="border p-3 rounded">
+                <div class="col-md-12 border p-3 rounded">
+                    
+                            {% if publications%}
+                            {% for post in publications %}
+                                
+                                    <h1>{{post.titulo}}</h1><br><hr>
+                                        <p> {{post.texto}}</p><hr>
+                                          <p> ({{post.fecha}}): {{post.author}}: {{post.etiquetas}}: {{post.categoria}}
+                                        </p>
+                         
+                            
+                            <div id="{{ post.id }}" class="custom-bg-color p-4 rounded mb-4" style="display: none;">
+                                <article class="blog-post">
+                                    <a href="#">Home</a> / {{ post.title }} <br><hr>
+                                    <h2 class="blog-post-title mb-1">
+                                        {{ post.title }}
+                                    </h2>
+                                    <hr>
+                                 
+                                    <p class="blog-post-meta">Fecha de Publicacion: {{ post.date_created.date }} - Autor: {{ post.author }}</p>
+                                    <p>Categoria: <span style="color: darkmagenta;">{{ post.categoria }}</span></p>
+                                    <p>Etiqueta: <span style="color: darkmagenta;"> #{{ post.hashtag }}</span></p>
+                                </article>
+                                
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>No hay Publicaciones disponibles.</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+
+        </article>
+
+     <!-- Aside -->
+     <aside class="col-md-4">
+        <div class="card" id="ca">
+            <div class="card-body">
+                <h4 class="fst-italic"><span style="color: darkmagenta;">Lista de Publicaciones</span> <span style="color: darkmagenta;">({{ publications|length }}) </span></h4>
+                <ul>
+                    
+                {% for post in publications %}
+                <ul>
+                    <li>
+                    <a href="#">{{post.titulo}}</a>
+                </li>
+                </ul>
+                    {% endfor %}
+                    {% if publication|length == 0 %}
+                    
+                    {% else %}
+                        {% for post in post_list %}
+                            <li>
+                                <a href="#" class="blog-link" data-target="{{ post.id }}">{{ post.title }}</a>
+                            </li>
+                            
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+            
+                <h4 class="fst-italic"><span style="color: darkmagenta;">Categorias</span></h4>
+                <ul>
+                    {% for category in categories %}
+                <ul>
+                <li>
+                    <a href="#">{{category.nombre}}</a>
+                </li>
+                </ul>
+                    {% endfor %}
+                </ul>
+
+                <h4 class="fst-italic"><span style="color: darkmagenta;">Hashtag</span></h4>
+                <ul>
+                    {% for hashtag in hashtags %}
+                    <ul>
+                        <li>
+                            <a href="#">{{hashtag.nombre}}</a>
+                        </li>
+                    </ul>
+                    {% endfor %}
+                </ul>
+                            
+                
+            </div>
+        </div>
+    </aside>
+    </main>
+
+
+
+
+
+</div>
+
+<script>
+    document.getElementById('adminBtn').addEventListener('click', function() {
+        window.location.href = "{% url 'admin:index' %}";
+    });
+    </script>
+
+<script>
+    $(document).ready(function() {
+        // Mostrar el primer div al cargar la página
+        var primerPostId = '{{ post_list.last.id }}';
+        $('#' + primerPostId).show();
+
+        // Manejar clic en enlaces del blog
+        $('.blog-link').click(function(e) {
+            e.preventDefault();
+
+            // Ocultar todos los divs con clase 'custom-bg-color'
+            $('.custom-bg-color').hide();
+
+            // Mostrar el div correspondiente al enlace clicado
+            var target = $(this).data('target');
+            $('#' + target).show();
+        });
+    });
+</script>    
+
+
+
+<script>
+    $(document).ready(function() {
+    
+        // Manejar el clic en los enlaces
+        $('a.blog-link').on('click', function(e) {
+            e.preventDefault(); // Evitar el comportamiento predeterminado del enlace
+            var targetId = $(this).data('target'); // Obtener el ID del objetivo desde el atributo data-target
+    
+            // Ocultar todos los elementos con la clase .custom-bg-color
+            $('.custom-bg-color').hide();
+    
+            // Mostrar el elemento específico según el ID del enlace
+            $('#' + targetId).show();
+        });
+    });
+    </script>
+
+
+<footer>
+    {% block footer %}
+    Creado por Jacqueline Morales<sup>&copy;</sup>. Todos los derechos reservados.
+    {% endblock %}
+</footer>
+
+
+
+<script src="{% static 'scripts/blackmode.js' %}"></script>
+<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+
+</body>
+</html>
